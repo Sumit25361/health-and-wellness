@@ -15,7 +15,7 @@ function Login() {
         return re.test(String(email).toLowerCase());
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
@@ -24,9 +24,13 @@ function Login() {
             return;
         }
 
-        const result = login(email, password);
+        const result = await login(email, password);
         if (result.success) {
-            navigate('/dashboard');
+            if (result.role === 'admin') {
+                navigate('/admin-dashboard');
+            } else {
+                navigate('/dashboard');
+            }
         } else {
             setError(result.message);
         }

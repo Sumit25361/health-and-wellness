@@ -30,8 +30,9 @@ function ForgotPassword() {
             return;
         }
 
-        // Check if user exists in local storage first
-        if (!checkEmail(email)) {
+        // Check if user exists first
+        const emailExists = await checkEmail(email);
+        if (!emailExists) {
             setError('Email not found. Please register.');
             return;
         }
@@ -86,7 +87,7 @@ function ForgotPassword() {
         }
     };
 
-    const handlePasswordSubmit = (e) => {
+    const handlePasswordSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setMessage('');
@@ -101,14 +102,14 @@ function ForgotPassword() {
             return;
         }
 
-        const result = resetPassword(email, newPassword);
+        const result = await resetPassword(email, newPassword);
         if (result.success) {
             setMessage('Password reset successfully. Redirecting to login...');
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
         } else {
-            setError(result.message);
+            setError(result.message || "Failed to reset password");
         }
     };
 

@@ -12,32 +12,37 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    const login = (email, password) => {
-        // Simulate login by checking against localStorage
-        // In a real app, this would be an API call
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const foundUser = users.find(u => u.email === email && u.password === password);
-
-        if (foundUser) {
-            const userData = { email: foundUser.email, name: foundUser.name };
-            localStorage.setItem('user', JSON.stringify(userData));
-            setUser(userData);
-            return { success: true };
+    const login = async (email, password) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            if (data.success) {
+                localStorage.setItem('user', JSON.stringify(data.user));
+                setUser(data.user);
+                return { success: true, role: data.user.role };
+            }
+            return { success: false, message: data.message };
+        } catch (error) {
+            return { success: false, message: 'Server error. Please try again later.' };
         }
-        return { success: false, message: 'Invalid email or password' };
     };
 
-    const register = (userData) => {
-        // Simulate registration
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-        if (users.find(u => u.email === userData.email)) {
-            return { success: false, message: 'User already exists' };
+    const register = async (userData) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            return { success: false, message: 'Server error. Please try again later.' };
         }
-
-        users.push(userData);
-        localStorage.setItem('users', JSON.stringify(users));
-        return { success: true };
     };
 
     const logout = () => {
@@ -45,21 +50,33 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
-    const checkEmail = (email) => {
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        return users.some(u => u.email === email);
+    const checkEmail = async (email) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/check-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await response.json();
+            return data.success;
+        } catch (error) {
+            console.error('Check email error:', error);
+            return false;
+        }
     };
 
-    const resetPassword = (email, newPassword) => {
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const userIndex = users.findIndex(u => u.email === email);
-
-        if (userIndex !== -1) {
-            users[userIndex].password = newPassword;
-            localStorage.setItem('users', JSON.stringify(users));
-            return { success: true };
+    const resetPassword = async (email, newPassword) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/reset-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, newPassword })
+            });
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            return { success: false, message: 'Server error. Please try again later.' };
         }
-        return { success: false, message: 'User not found' };
     };
 
     return (

@@ -34,7 +34,7 @@ function Register() {
     return re.test(password);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -53,7 +53,7 @@ function Register() {
       return;
     }
 
-    const result = register({
+    const result = await register({
       name: formData.name,
       email: formData.email,
       password: formData.password
@@ -63,7 +63,7 @@ function Register() {
       alert("Registered Successfully! Please login.");
       navigate("/login");
     } else {
-      setError(result.message);
+      setError(result.message || "Registration failed");
     }
   };
 
