@@ -29,12 +29,7 @@ const AdminRoute = ({ children }) => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
   if (user.role !== 'admin') return <Navigate to="/dashboard" replace />;
-  return (
-    <>
-      <NavBar />
-      {children}
-    </>
-  );
+  return children;
 };
 
 function AppRoutes() {
