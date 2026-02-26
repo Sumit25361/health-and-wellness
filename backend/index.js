@@ -13,6 +13,11 @@ app.use(bodyParser.json());
 // In-memory store for OTPs (In production, use Redis/Database)
 const otpStore = {};
 
+// In-memory store for users (In production, use Database)
+const users = [
+    { name: 'Admin', email: 'admin@gmail.com', password: 'admin123', role: 'admin' }
+];
+
 // Nodemailer Transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -93,6 +98,57 @@ app.post('/api/verify-otp', (req, res) => {
     } else {
         res.status(400).json({ success: false, message: 'Invalid OTP' });
     }
+});
+
+// Route: Check Email
+app.post('/api/check-email', (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ success: false, message: 'Email is required' });
+    }
+    const userExists = users.some(u => u.email === email);
+    res.json({ success: userExists });
+});
+
+// Route: Register
+app.post('/api/register', (req, res) => {
+    const userData = req.body;
+    if (!userData.email || !userData.password) {
+        return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+    if (users.find(u => u.email === userData.email)) {
+        return res.status(400).json({ success: false, message: 'User already exists' });
+    }
+    users.push(userData);
+    res.json({ success: true, message: 'User registered successfully' });
+});
+
+// Route: Login
+app.post('/api/login', (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+    const foundUser = users.find(u => u.email === email && u.password === password);
+    if (foundUser) {
+        const { password, ...userWithoutPassword } = foundUser;
+        return res.json({ success: true, user: userWithoutPassword });
+    }
+    res.status(401).json({ success: false, message: 'Invalid email or password' });
+});
+
+// Route: Reset Password
+app.post('/api/reset-password', (req, res) => {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword) {
+        return res.status(400).json({ success: false, message: 'Email and new password are required' });
+    }
+    const userIndex = users.findIndex(u => u.email === email);
+    if (userIndex !== -1) {
+        users[userIndex].password = newPassword;
+        return res.json({ success: true, message: 'Password reset successfully' });
+    }
+    res.status(404).json({ success: false, message: 'User not found' });
 });
 
 app.listen(PORT, () => {
