@@ -33,7 +33,7 @@ function HydrationPage() {
             <header style={s.header}>
                 <button onClick={() => navigate('/dashboard')} style={s.back}>← Back</button>
                 <h1 style={s.brand}>💧 Hydration Tracker</h1>
-                <button onClick={logout} style={s.logoutBtn}>Logout</button>
+
             </header>
             <div style={s.body}>
                 {/* Left */}

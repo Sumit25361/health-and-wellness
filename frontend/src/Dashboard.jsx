@@ -2,62 +2,39 @@ import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
 
-const categories = [
-    {
-        icon: '💧',
-        title: 'Hydration',
-        description: 'Drinking enough water boosts energy, improves skin and aids digestion.',
-        route: '/hydration',
-    },
-    {
-        icon: '🥗',
-        title: 'Healthy Food',
-        description: 'Nutritious meals strengthen immunity and maintain body balance.',
-        route: '/healthy-food',
-    },
-    {
-        icon: '🌬️',
-        title: 'Breathing',
-        description: 'Deep breathing reduces stress and improves oxygen flow.',
-        route: '/breathing',
-    },
-    {
-        icon: '🧘',
-        title: 'Yoga',
-        description: 'Yoga improves flexibility, posture and mental peace.',
-        route: '/yoga',
-    },
-    {
-        icon: '🚶',
-        title: 'Walking',
-        description: 'Daily walking keeps your heart healthy and active.',
-        route: '/walking',
-    },
-];
-
 function Dashboard() {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
+
+    const patientStats = [
+        { title: 'Hydration', value: '1.5', goal: '2.5 L', icon: '💧', color: '#0284c7', route: '/hydration' },
+        { title: 'Walking', value: '6,500', goal: '10,000 steps', icon: '🚶', color: '#16a34a', route: '/walking' },
+        { title: 'Yoga', value: '30', goal: '45 mins', icon: '🧘', color: '#9333ea', route: '/yoga' },
+        { title: 'Breathing', value: '2', goal: '3 sessions', icon: '🌬️', color: '#0ea5e9', route: '/breathing' },
+        { title: 'Healthy Food', value: '1,400', goal: '2,000 kcal', icon: '🥗', color: '#ea580c', route: '/healthy-food' },
+    ];
 
     return (
         <div style={styles.page}>
-            {/* Header */}
-            <header style={styles.header}>
-                <h1 style={styles.brand}>Health and Fitness</h1>
-                <button onClick={logout} style={styles.logoutBtn}>Logout</button>
-            </header>
-
             {/* Main */}
             <main style={styles.main}>
-                <h2 style={styles.welcome}>Welcome, {user?.name || 'User'} 🔥</h2>
+                <h2 style={styles.welcome}>Welcome back, {user?.name || 'User'}! 👋</h2>
+                <p style={styles.subtitle}>Here is your daily health overview.</p>
 
-                <div style={styles.cards}>
-                    {categories.map((cat) => (
-                        <div key={cat.title} style={styles.card}>
-                            <div style={styles.cardIcon}>{cat.icon}</div>
-                            <h3 style={styles.cardTitle}>{cat.title}</h3>
-                            <p style={styles.cardDesc}>{cat.description}</p>
-                            <button style={styles.joinBtn} onClick={() => navigate(cat.route)}>Join Now</button>
+                <div style={styles.statsGrid}>
+                    {patientStats.map((stat) => (
+                        <div key={stat.title} style={styles.statCard} onClick={() => navigate(stat.route)} role="button" tabIndex={0}>
+                            <div style={{ ...styles.iconBox, color: stat.color, background: `${stat.color}15` }}>
+                                {stat.icon}
+                            </div>
+                            <div style={styles.statInfo}>
+                                <h3 style={styles.statTitle}>{stat.title}</h3>
+                                <p style={styles.statValue}>
+                                    <span style={styles.currentValue}>{stat.value}</span>
+                                    <span style={styles.goalValue}> / {stat.goal}</span>
+                                </p>
+                            </div>
+                            <div style={styles.arrow}>➔</div>
                         </div>
                     ))}
                 </div>
@@ -79,93 +56,86 @@ function Dashboard() {
 
 const styles = {
     page: {
-        minHeight: '100vh',
+        minHeight: 'calc(100vh - 65px)', // subtract navbar height roughly
         background: 'linear-gradient(135deg, #a8d5c2 0%, #c8e6d8 40%, #b2dfd0 100%)',
         fontFamily: "'Segoe UI', sans-serif",
         position: 'relative',
         overflow: 'hidden',
     },
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '16px 32px',
-        background: 'rgba(255,255,255,0.3)',
-        backdropFilter: 'blur(6px)',
-    },
-    brand: {
-        color: '#1a6b50',
-        fontSize: '22px',
-        fontWeight: '700',
-        margin: 0,
-    },
-    logoutBtn: {
-        background: '#e53935',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '8px',
-        padding: '10px 22px',
-        fontWeight: '700',
-        fontSize: '14px',
-        cursor: 'pointer',
-        boxShadow: '0 2px 8px rgba(229,57,53,0.4)',
-    },
     main: {
-        padding: '40px 32px 80px',
+        padding: '40px 32px 100px',
+        maxWidth: '900px',
+        margin: '0 auto',
+        position: 'relative',
+        zIndex: 2,
     },
     welcome: {
         textAlign: 'center',
-        fontSize: '26px',
-        fontWeight: '600',
+        fontSize: '28px',
+        fontWeight: '700',
         color: '#1a3a2e',
-        marginBottom: '36px',
+        marginBottom: '8px',
+        marginTop: 0,
     },
-    cards: {
-        display: 'flex',
+    subtitle: {
+        textAlign: 'center',
+        fontSize: '16px',
+        color: '#3d6b59',
+        marginBottom: '40px',
+    },
+    statsGrid: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
         gap: '20px',
-        justifyContent: 'center',
-        flexWrap: 'wrap',
     },
-    card: {
+    statCard: {
         background: '#fff',
         borderRadius: '16px',
-        padding: '28px 20px',
-        width: '170px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+        padding: '20px',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        textAlign: 'center',
-        gap: '10px',
-        transition: 'transform 0.2s',
+        gap: '16px',
+        cursor: 'pointer',
+        transition: 'transform 0.2s, boxShadow 0.2s',
     },
-    cardIcon: {
-        fontSize: '36px',
+    iconBox: {
+        width: '56px',
+        height: '56px',
+        borderRadius: '12px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '28px',
     },
-    cardTitle: {
-        color: '#1a6b50',
-        fontSize: '16px',
-        fontWeight: '700',
-        margin: 0,
-    },
-    cardDesc: {
-        color: '#555',
-        fontSize: '13px',
-        lineHeight: '1.5',
-        margin: 0,
+    statInfo: {
         flex: 1,
     },
-    joinBtn: {
-        background: '#2e7d5e',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '8px',
-        padding: '8px 20px',
+    statTitle: {
+        margin: '0 0 4px 0',
+        fontSize: '15px',
         fontWeight: '600',
+        color: '#555',
+    },
+    statValue: {
+        margin: 0,
+        display: 'flex',
+        alignItems: 'baseline',
+        gap: '4px',
+    },
+    currentValue: {
+        fontSize: '22px',
+        fontWeight: '800',
+        color: '#222',
+    },
+    goalValue: {
         fontSize: '13px',
-        cursor: 'pointer',
-        marginTop: '4px',
-        boxShadow: '0 2px 6px rgba(46,125,94,0.35)',
+        color: '#888',
+        fontWeight: '500',
+    },
+    arrow: {
+        color: '#ccc',
+        fontSize: '18px',
     },
     badge: {
         position: 'absolute',
@@ -179,7 +149,8 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'rgba(255,255,255,0.5)',
+        background: 'rgba(255,255,255,0.7)',
+        zIndex: 1,
     },
     badgeSmall: {
         color: '#1a6b50',
@@ -193,22 +164,24 @@ const styles = {
         letterSpacing: '1px',
     },
     leafTopLeft: {
-        position: 'fixed',
-        top: '60px',
+        position: 'absolute',
+        top: '20px',
         left: '-10px',
         fontSize: '80px',
         opacity: 0.3,
         transform: 'rotate(30deg)',
         pointerEvents: 'none',
+        zIndex: 0,
     },
     leafBottomRight: {
-        position: 'fixed',
+        position: 'absolute',
         bottom: '20px',
         right: '-10px',
         fontSize: '80px',
         opacity: 0.3,
         transform: 'rotate(-30deg) scaleX(-1)',
         pointerEvents: 'none',
+        zIndex: 0,
     },
 };
 

@@ -24,7 +24,7 @@ function AdminDashboard() {
                     <a href="#" style={styles.navItem}>📊 Reports</a>
                     <a href="#" style={styles.navItem}>⚙️ Settings</a>
                 </nav>
-                <button onClick={logout} style={styles.logoutBtn}>🚪 Logout</button>
+
             </div>
 
             <div style={styles.main}>

@@ -37,7 +37,7 @@ function YogaPage() {
             <header style={s.header}>
                 <button onClick={() => navigate('/dashboard')} style={s.back}>← Back</button>
                 <h1 style={s.brand}>🧘 Yoga Tracker</h1>
-                <button onClick={logout} style={s.logoutBtn}>Logout</button>
+
             </header>
             <div style={s.body}>
                 <div style={s.left}>

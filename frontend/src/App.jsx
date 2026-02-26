@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
+import NavBar from './NavBar';
 import Login from './Login';
 import Register from './Register';
 import ForgotPassword from './ForgotPassword';
@@ -16,14 +17,24 @@ const ProtectedRoute = ({ children }) => {
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  return children;
+  return (
+    <>
+      <NavBar />
+      {children}
+    </>
+  );
 };
 
 const AdminRoute = ({ children }) => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
   if (user.role !== 'admin') return <Navigate to="/dashboard" replace />;
-  return children;
+  return (
+    <>
+      <NavBar />
+      {children}
+    </>
+  );
 };
 
 function AppRoutes() {

@@ -35,7 +35,7 @@ function WalkingPage() {
             <header style={s.header}>
                 <button onClick={() => navigate('/dashboard')} style={s.back}>← Back</button>
                 <h1 style={s.brand}>🚶 Walking Tracker</h1>
-                <button onClick={logout} style={s.logoutBtn}>Logout</button>
+
             </header>
             <div style={s.body}>
                 <div style={s.left}>
